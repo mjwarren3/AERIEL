@@ -24,3 +24,55 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Header font and weight */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold mb-1 mt-2;
+}
+
+/* Header sizes */
+h1 {
+  @apply text-4xl;
+}
+
+h2 {
+  @apply text-3xl;
+}
+
+h3 {
+  @apply text-2xl;
+}
+
+h4 {
+  @apply text-xl;
+}
+
+h5 {
+  @apply text-lg;
+}
+
+h6 {
+  @apply text-base;
+}
+
+/* Paragraph sizes */
+p {
+  @apply text-sm;
+}
+
+ul {
+  @apply list-disc list-inside;
+}
+
+li {
+  @apply text-sm;
+}
+
+code {
+  @apply bg-gray-200 text-gray-800 p-1 rounded;
+}

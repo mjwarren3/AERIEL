@@ -4,8 +4,15 @@ interface ButtonProps {
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
-  variant?: "default" | "primary" | "secondary";
-  type?: "button" | "submit" | "reset"; // Add type prop
+  variant?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "success"
+    | "destructive"; // Added "success" and "destructive"
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -13,7 +20,8 @@ const Button: React.FC<ButtonProps> = ({
   children,
   className = "",
   variant = "default",
-  type = "button", // Default to "button"
+  type = "button",
+  disabled = false,
 }) => {
   const baseStyles =
     "border-2 rounded-lg py-2 px-4 transition duration-300 cursor-pointer font-semibold";
@@ -21,13 +29,20 @@ const Button: React.FC<ButtonProps> = ({
     default: "border-black hover:bg-black hover:text-white dark:border-white",
     primary: "bg-blue-500 text-white hover:bg-blue-600",
     secondary: "bg-gray-500 text-white hover:bg-gray-600",
+    outline: "border-gray-500 text-gray-500 hover:bg-gray-100",
+    success: "bg-green-500 text-white hover:bg-green-600", // Success styles
+    destructive: "bg-red-500 text-white hover:bg-red-600", // Destructive styles
   };
+  const disabledStyles = "cursor-not-allowed opacity-50";
 
   return (
     <button
-      onClick={onClick}
-      type={type} // Pass the type prop to the button
-      className={`${baseStyles} ${variants[variant]} ${className}`}
+      onClick={disabled ? undefined : onClick}
+      type={type}
+      disabled={disabled}
+      className={`${baseStyles} ${
+        disabled ? disabledStyles : variants[variant]
+      } ${className}`}
     >
       {children}
     </button>
