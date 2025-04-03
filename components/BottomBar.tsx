@@ -16,13 +16,13 @@ const BottomBar = () => {
     },
     { href: "/app", icon: Book, label: "My Courses", color: "text-primary" },
     {
-      href: "/user/team",
+      href: "/app/explore",
       icon: Search,
       label: "Explore",
       color: "text-mediumgreen",
     },
     {
-      href: "/user/messages",
+      href: "/app/profile",
       icon: User,
       label: "Profile",
       color: "text-[#7BBBFF]",

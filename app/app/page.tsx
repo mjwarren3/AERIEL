@@ -3,6 +3,7 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useState } from "react";
+import CreateLessonModal from "@/components/CreateLessonModal";
 
 const initialCourses = [
   {
@@ -36,6 +37,7 @@ const initialCourses = [
 
 export default function PrivatePage() {
   const [courses, setCourses] = useState(initialCourses);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleActive = (id: number) => {
     setCourses((prevCourses) =>
@@ -45,9 +47,22 @@ export default function PrivatePage() {
     );
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="w-full px-4 pt-4">
-      <h1>Your Courses</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1>Your Courses</h1>
+        <Button className="bg-blue-500 text-white" onClick={handleOpenModal}>
+          New Course
+        </Button>
+      </div>
       <div className="grid grid-cols-1 w-full gap-4 mt-8">
         {courses.map((course) => (
           <div
@@ -81,6 +96,11 @@ export default function PrivatePage() {
           </div>
         ))}
       </div>
+      <CreateLessonModal
+        preFilledTopic=""
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
