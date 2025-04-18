@@ -26,7 +26,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex w-full justify-center`}
       >
-        <div className="max-w-xl w-full font-[family-name:var(--font-geist-sans)]">
+        <div className="w-full font-[family-name:var(--font-geist-sans)]">
           {children}
         </div>
       </body>

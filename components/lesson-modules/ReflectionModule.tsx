@@ -3,7 +3,7 @@ import { useLessonContext } from "@/context/LessonContextProvider";
 import { Reflection } from "@/types/lesson-modules";
 import { useEffect } from "react";
 
-export default function ReflectionModule({ content }: { content: Reflection }) {
+export default function ReflectionModule({ slide }: { slide: Reflection }) {
   const { setContinueEnabled } = useLessonContext();
 
   // Ensure the "Continue" button is enabled by default for Markdown modules
@@ -12,7 +12,7 @@ export default function ReflectionModule({ content }: { content: Reflection }) {
   }, [setContinueEnabled]);
   return (
     <AnimatedDiv>
-      <h2 className="font-semibold">{content.prompt}</h2>
+      <h2 className="font-semibold">{slide.question}</h2>
       <textarea
         className="w-full border rounded p-2 mt-4"
         rows={4}

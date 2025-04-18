@@ -4,8 +4,10 @@ import { Markdown } from "@/types/lesson-modules";
 import { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
-export default function MarkdownModule({ content }: { content: Markdown }) {
+export default function MarkdownModule({ slide }: { slide: Markdown }) {
   const { setContinueEnabled } = useLessonContext();
+
+  console.log("Content", slide);
 
   // Ensure the "Continue" button is enabled by default for Markdown modules
   useEffect(() => {
@@ -14,7 +16,8 @@ export default function MarkdownModule({ content }: { content: Markdown }) {
 
   return (
     <AnimatedDiv>
-      <ReactMarkdown>{content.content}</ReactMarkdown>
+      <h2 className="font-semibold">{slide.question}</h2>
+      <ReactMarkdown>{slide.content.text}</ReactMarkdown>
     </AnimatedDiv>
   );
 }
