@@ -24,10 +24,12 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
 }) => {
   const baseStyles =
-    "border-2 rounded-lg py-2 px-4 transition duration-300 cursor-pointer font-semibold";
+    "rounded-lg py-2 px-4 transition duration-300 cursor-pointer font-semibold";
   const variants = {
-    default: "border-black hover:bg-black hover:text-white dark:border-white",
-    primary: "bg-blue-500 text-white hover:bg-blue-600",
+    default:
+      "border-black hover:bg-black hover:text-white dark:border-white border-2",
+    primary:
+      "bg-gradient-to-r from-pink-500 to-yellow-500 border-transparent border-0 text-white hover:from-pink-600 hover:to-yellow-600",
     secondary: "bg-gray-500 text-white hover:bg-gray-600",
     outline: "border-gray-500 text-gray-500 hover:bg-gray-100",
     success: "bg-green-500 text-white hover:bg-green-600", // Success styles

@@ -41,7 +41,7 @@ export async function verify(formData: FormData) {
   if (error) {
     redirect("/error");
   } else {
-    redirect("/app");
+    redirect("/create/my-courses");
   }
 }
 

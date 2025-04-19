@@ -6,6 +6,7 @@ import {
   getSlidesByLessonId,
   getLessonByIdService,
   addSlide,
+  updateSlideService,
 } from "@/app/services/courseService";
 
 import { Lesson } from "@/types/courses";
@@ -15,6 +16,7 @@ import SlideEditorSidebar from "@/components/SlideEditorSidebar";
 import LessonPreviewModal from "@/components/LessonPreviewModal";
 import { LessonContextProvider } from "@/context/LessonContextProvider";
 import { LessonModule } from "@/types/lesson-modules";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 export default function LessonDetailsPage() {
   const { lesson_id } = useParams();
@@ -26,11 +28,16 @@ export default function LessonDetailsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [isEditingOrder, setIsEditingOrder] = useState(false);
+  const [updatedSlides, setUpdatedSlides] = useState<LessonModule[] | null>(
+    null
+  );
 
   const refreshSlides = async () => {
     if (typeof lesson_id === "string") {
       const updatedSlides = await getSlidesByLessonId(lesson_id);
       setSlides(updatedSlides);
+      setUpdatedSlides(updatedSlides);
     }
   };
 
@@ -54,6 +61,7 @@ export default function LessonDetailsPage() {
 
         if (slidesData) {
           setSlides(slidesData);
+          setUpdatedSlides(slidesData);
         }
       } catch (err) {
         console.error(err);
@@ -94,6 +102,44 @@ export default function LessonDetailsPage() {
     }
   };
 
+  const handleMoveSlide = (index: number, direction: "up" | "down") => {
+    if (!updatedSlides) return;
+
+    const newSlides = [...updatedSlides];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+    // Ensure the target index is within bounds
+    if (targetIndex < 0 || targetIndex >= newSlides.length) return;
+
+    // Swap the slides in the array
+    [newSlides[index], newSlides[targetIndex]] = [
+      newSlides[targetIndex],
+      newSlides[index],
+    ];
+
+    // Update the order values based on their new positions
+    newSlides.forEach((slide, idx) => {
+      slide.order = idx + 1; // Assuming order starts from 1
+    });
+
+    setUpdatedSlides(newSlides);
+  };
+
+  const handleSaveOrder = async () => {
+    if (!updatedSlides) return;
+
+    try {
+      await Promise.all(
+        updatedSlides.map((slide) => updateSlideService(slide))
+      );
+      setSlides(updatedSlides);
+      setIsEditingOrder(false);
+    } catch (err) {
+      console.error("Error saving slide order:", err);
+      setError("Failed to save slide order.");
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -114,15 +160,40 @@ export default function LessonDetailsPage() {
         <h2 className="text-xl font-semibold">Slides</h2>
         {slides && slides.length > 0 ? (
           <div className="flex flex-col w-full gap-4">
-            {slides.map((slide) => (
-              <div
-                onClick={() => setSelectedSlide(slide)}
-                key={slide.id}
-                className="p-4 border rounded cursor-pointer w-full hover:bg-gray-100"
-              >
-                <h3 className="text-base font-semibold">{slide.question}</h3>
-              </div>
-            ))}
+            {(isEditingOrder ? updatedSlides : slides)
+              ?.sort((a, b) => a.order - b.order)
+              .map((slide, index) => (
+                <div
+                  key={slide.id}
+                  className="p-4 border rounded cursor-pointer w-full hover:bg-gray-100 flex items-center justify-between"
+                >
+                  <div
+                    onClick={() => !isEditingOrder && setSelectedSlide(slide)}
+                  >
+                    <h3 className="text-base font-semibold">
+                      {slide.question}
+                    </h3>
+                  </div>
+                  {isEditingOrder && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleMoveSlide(index, "up")}
+                        className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                        disabled={index === 0}
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleMoveSlide(index, "down")}
+                        className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                        disabled={index === slides.length - 1}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
         ) : (
           <p className="text-gray-600 mt-2">
@@ -130,6 +201,29 @@ export default function LessonDetailsPage() {
           </p>
         )}
         <div className="flex gap-4 mt-4">
+          {!isEditingOrder ? (
+            <button
+              onClick={() => setIsEditingOrder(true)}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Edit Order
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsEditingOrder(false)}
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveOrder}
+                className="bg-green-500 text-white px-4 py-2 rounded"
+              >
+                Save Order
+              </button>
+            </>
+          )}
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-blue-500 text-white px-4 py-2 rounded"

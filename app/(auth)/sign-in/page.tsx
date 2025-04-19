@@ -40,12 +40,14 @@ export default function SignUpPage() {
       onSubmit={isVerificationStep ? handleVerify : handleSignUp}
       className="w-full flex flex-col justify-center items-center h-dvh p-4 text-center"
     >
-      <AnimatedDiv className="w-full max-w-sm">
+      <AnimatedDiv className="w-full max-w-md">
         <h1 className="text-2xl w-full">
-          {isVerificationStep ? "Verify Your Phone" : "Stay Curious"}
+          {isVerificationStep
+            ? "Verify Your Phone"
+            : "Create dynamic learning content in minutes"}
         </h1>
         <p className="text-gray-700 w-full text-center text-sm">
-          Enter your phone number to access Clai
+          Enter your phone number to access
         </p>
 
         {!isVerificationStep ? (
@@ -78,11 +80,11 @@ export default function SignUpPage() {
           </div>
         )}
 
-        {!isVerificationStep && (
+        {/* {!isVerificationStep && (
           <p className="text-gray-700 w-full text-center mt-1 text-sm">
             US Phone Numbers only
           </p>
-        )}
+        )} */}
       </AnimatedDiv>
     </form>
   );

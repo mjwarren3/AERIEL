@@ -25,7 +25,7 @@ export async function generateLessonsFromCourseData({
       {
         role: "system",
         content:
-          "You are helping generate a course outline. Return a JSON array of lessons. Each item should have: lesson_title, lesson_description, and lesson_order.",
+          "You are helping generate a course outline. Return a JSON array of lessons. Each item should have: lesson_title, lesson_description, and lesson_order. Don't title things 'lesson 1', 'lesson 2', etc. Instead, use descriptive titles.",
       },
       {
         role: "user",

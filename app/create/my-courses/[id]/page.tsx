@@ -11,6 +11,9 @@ import { generateLessonsFromCourseData } from "@/app/actions/generateLessonsFrom
 import { Course, Lesson } from "@/types/courses";
 import Modal from "@/components/Modal";
 import LessonsList from "@/components/LessonsList";
+import Button from "@/components/Button";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function CourseDetailsPage() {
   const { id } = useParams();
@@ -20,6 +23,8 @@ export default function CourseDetailsPage() {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [description, setDescription] = useState("");
+  const [lessonCount, setLessonCount] = useState(5);
 
   const refreshLessons = async () => {
     if (typeof id === "string") {
@@ -44,6 +49,7 @@ export default function CourseDetailsPage() {
           setError("Course not found.");
         } else {
           setCourse(courseData);
+          setDescription(courseData.course_description); // Initialize description
         }
 
         if (lessonsData) {
@@ -67,8 +73,8 @@ export default function CourseDetailsPage() {
     try {
       const generatedLessons: Lesson[] = await generateLessonsFromCourseData({
         title: course.course_title,
-        description: course.course_description,
-        lessonCount: 5,
+        description: description, // Use user-adjusted description
+        lessonCount: lessonCount, // Use user-inputted lesson count
       });
 
       for (const lesson of generatedLessons) {
@@ -100,11 +106,17 @@ export default function CourseDetailsPage() {
   }
 
   return (
-    <div className="w-full flex flex-col items-start p-4">
+    <div className="w-full flex flex-col items-start">
+      <Link
+        href="/create/my-courses"
+        className="flex text-gray-500 items-center"
+      >
+        <ChevronLeft />
+        Back to My Courses
+      </Link>
       <h1 className="text-2xl font-bold mb-4">{course.course_title}</h1>
       <p className="text-lg">{course.course_description}</p>
       <div className="mt-4 w-full">
-        <h2 className="text-xl font-semibold">Lessons</h2>
         {lessons && lessons.length > 0 ? (
           <LessonsList
             lessons={lessons}
@@ -116,32 +128,42 @@ export default function CourseDetailsPage() {
             No lessons available for this course.
           </p>
         )}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-blue-500 text-white px-4 py-2 mt-4 rounded"
-        >
+        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
           Generate Lessons
-        </button>
+        </Button>
       </div>
 
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <h2 className="text-xl font-bold mb-4">Generate Lessons</h2>
-          <p>Are you sure you want to generate lessons for this course?</p>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="bg-gray-300 text-black px-4 py-2 rounded mr-2"
-            >
-              Cancel
-            </button>
-            <button
+          <p>
+            Adjust the description and upload context content to create a list
+            of lessons in this course
+          </p>
+          <label>Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)} // Allow user to edit description
+            className="p-2 w-full border rounded mt-2"
+          />
+
+          <label>How many lessons do you want to generate?</label>
+          <input
+            type="number"
+            value={lessonCount}
+            onChange={(e) => setLessonCount(Number(e.target.value))} // Update lesson count
+            className="p-2 w-full border rounded mt-2"
+            min={1}
+          />
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button
               onClick={handleGenerateLessons}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              variant="primary"
               disabled={generating}
             >
-              {generating ? "Generating..." : "Generate"}
-            </button>
+              {generating ? "Generating..." : "Generate Lessons"}
+            </Button>
           </div>
         </Modal>
       )}

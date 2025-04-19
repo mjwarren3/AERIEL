@@ -31,12 +31,6 @@ export default function LessonPreviewModal({
     }
   };
 
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
   const renderSlide = () => {
     if (!currentSlide) return null;
 
@@ -64,24 +58,19 @@ export default function LessonPreviewModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="w-full h-dvh px-4 flex flex-col justify-between">
         <div className="w-full">
-          <div className="mb-6">{renderSlide()}</div>
+          <div className="w-full py-12 bg-white">
+            <div className="mb-6 mt-6">{renderSlide()}</div>
+          </div>
         </div>
-        <div className="flex justify-between mt-4">
-          <Button
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-            className="bg-gray-300 text-black px-4 py-2 rounded"
-          >
-            Previous
+        {currentIndex < slides.length - 1 ? (
+          <Button className="w-full mt-4 mb-4" onClick={handleNext}>
+            Continue
           </Button>
-          <Button
-            onClick={handleNext}
-            disabled={currentIndex === slides.length - 1}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Next
+        ) : (
+          <Button className="w-full mt-4 mb-4" onClick={onClose}>
+            Close
           </Button>
-        </div>
+        )}
       </div>
     </Modal>
   );

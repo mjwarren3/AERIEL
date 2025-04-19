@@ -5,6 +5,7 @@ import { updateSlideService } from "@/app/services/courseService";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { LessonModule } from "@/types/lesson-modules";
+import ReactMarkdown from "react-markdown";
 
 type SlideEditorSidebarProps = {
   slide: LessonModule;
@@ -92,6 +93,22 @@ export default function SlideEditorSidebar({
             >
               Add Item
             </button>
+          </div>
+        );
+      } else if (field === "text") {
+        return (
+          <div key={field} className="mb-4">
+            <label className="block font-semibold capitalize">{field}</label>
+            <textarea
+              rows={12}
+              value={value as string}
+              onChange={(e) => handleContentChange(field, e.target.value)}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <h4>Preview</h4>
+            <div className="border p-2 rounded space-y-3 bg-gray-100">
+              <ReactMarkdown>{value as string}</ReactMarkdown>
+            </div>
           </div>
         );
       } else {

@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCoursesService } from "@/app/services/courseService";
 import { Course } from "@/types/courses";
+import Button from "@/components/Button";
+import NewCourseModal from "@/components/NewCourseModal";
 
 export default function MyCoursesPage() {
   const [courses, setCourses] = useState<Course[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const router = useRouter();
 
   useEffect(() => {
@@ -31,6 +34,14 @@ export default function MyCoursesPage() {
     fetchCourses();
   }, []);
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -44,20 +55,27 @@ export default function MyCoursesPage() {
   }
 
   return (
-    <div className="w-full flex flex-col p-4">
-      <h1 className="text-2xl font-bold mb-4">My Courses</h1>
-      <div className="w-full flex flex-wrap gap-4">
+    <div className="w-full flex flex-col">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">My Courses</h1>
+        <Button onClick={handleModalOpen}>New Course</Button>
+      </div>
+      <div className="w-full grid grid-cols-3 gap-4 mt-2">
         {courses.map((course) => (
           <div
             key={course.id}
-            className="p-4 border rounded cursor-pointer max-w-72 hover:bg-gray-100"
+            className="p-4 border rounded-xl border-gray-400 cursor-pointer hover:bg-gray-100"
             onClick={() => router.push(`/create/my-courses/${course.id}`)}
           >
             <h3 className="text-base font-semibold">{course.course_title}</h3>
             <p className="text-sm text-gray-600">{course.course_description}</p>
+            <div className="bg-pink-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+              {course.course_category}
+            </div>
           </div>
         ))}
       </div>
+      <NewCourseModal isOpen={isModalOpen} onClose={handleModalClose} />
     </div>
   );
 }

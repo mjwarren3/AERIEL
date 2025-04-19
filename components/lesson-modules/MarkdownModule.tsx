@@ -17,7 +17,9 @@ export default function MarkdownModule({ slide }: { slide: Markdown }) {
   return (
     <AnimatedDiv>
       <h2 className="font-semibold">{slide.question}</h2>
-      <ReactMarkdown>{slide.content.text}</ReactMarkdown>
+      <div className="space-y-3">
+        <ReactMarkdown>{slide.content.text}</ReactMarkdown>
+      </div>
     </AnimatedDiv>
   );
 }

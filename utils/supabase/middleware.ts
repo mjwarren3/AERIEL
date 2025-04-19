@@ -55,9 +55,12 @@ export async function updateSession(request: NextRequest) {
   ) {
     // user exists, redirect to the app page
     const url = request.nextUrl.clone();
-    url.pathname = "/app";
+    url.pathname = "/create/my-courses";
     return NextResponse.redirect(url);
-  } else if (!user && request.nextUrl.pathname.startsWith("/app")) {
+  } else if (
+    !user &&
+    request.nextUrl.pathname.startsWith("/create/my-courses")
+  ) {
     // no user, redirect to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
