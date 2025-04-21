@@ -348,7 +348,7 @@ export default function LessonDetailsPage() {
               variant="primary"
               disabled={generating}
             >
-              {generating ? "Generating..." : "Generate Lessons"}
+              {generating ? "Generating..." : "Generate Exercises"}
             </Button>
           </div>
         </Modal>

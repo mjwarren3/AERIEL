@@ -1,25 +1,26 @@
 import AnimatedDiv from "@/components/AnimatedDiv";
-import { useLessonContext } from "@/context/LessonContextProvider";
 import { Markdown } from "@/types/lesson-modules";
-import { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import Button from "../Button";
 
-export default function MarkdownModule({ slide }: { slide: Markdown }) {
-  const { setContinueEnabled } = useLessonContext();
-
-  console.log("Content", slide);
-
-  // Ensure the "Continue" button is enabled by default for Markdown modules
-  useEffect(() => {
-    setContinueEnabled(true);
-  }, [setContinueEnabled]);
-
+export default function MarkdownModule({
+  slide,
+  handleNext,
+}: {
+  slide: Markdown;
+  handleNext: () => void;
+}) {
   return (
-    <AnimatedDiv>
-      <h2 className="font-semibold">{slide.question}</h2>
-      <div className="space-y-3">
-        <ReactMarkdown>{slide.content.text}</ReactMarkdown>
+    <AnimatedDiv className="flex flex-col justify-between max-h-[896px] bg-white px-8 pb-4 h-dvh font-sans">
+      <div className="w-full mt-16">
+        <h1 className="gradient-text">{slide.question}</h1>
+        <div className="space-y-3 text-xl mt-4">
+          <ReactMarkdown>{slide.content.text}</ReactMarkdown>
+        </div>
       </div>
+      <Button onClick={handleNext} className="w-full">
+        Continue
+      </Button>
     </AnimatedDiv>
   );
 }

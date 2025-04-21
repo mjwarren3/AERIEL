@@ -37,11 +37,11 @@ h6 {
 
 /* Header sizes */
 h1 {
-  @apply text-4xl;
+  @apply text-2xl lg:text-4xl;
 }
 
 h2 {
-  @apply text-3xl;
+  @apply text-2xl lg:text-3xl;
 }
 
 h3 {
@@ -61,16 +61,9 @@ h6 {
 }
 
 /* Paragraph sizes */
-p {
-  @apply text-sm;
-}
 
 ul {
   @apply list-disc list-inside;
-}
-
-li {
-  @apply text-sm;
 }
 
 code {
@@ -86,4 +79,8 @@ code {
     linear-gradient(90deg, #b4b4c1 1px, #f4f4fa 1px);
   background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
   background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+}
+
+.gradient-text {
+  @apply text-transparent bg-gradient-to-r from-teal-500 to-green-500 bg-clip-text;
 }

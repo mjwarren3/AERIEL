@@ -21,29 +21,29 @@ const PreviewModal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className={`fixed h-dvh z-100 inset-0 flex items-center justify-center bg-white bg-opacity-50`}
+          className={`fixed h-dvh z-50 inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)]`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className={`bg-white max-w-xl z-100 h-dvh text-primary overflow-y-auto relative w-full flex flex-col justify-start items-center sm:justify-start  sm:shadow-lg sm:items-start`}
+            className={`bg-white max-w-lg max-h-[896px] z-50 h-dvh text-primary overflow-y-auto relative w-full flex flex-col justify-start items-center sm:justify-start  sm:shadow-lg sm:items-start`}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0 }}
           >
             <div
-              className="w-full flex h-dvh flex-col"
+              className="w-full flex h-dvh max-h-[896px] flex-col"
               role="dialog"
               aria-modal="true"
             >
               {/* Close Button */}
               <button
-                className="absolute top-4 right-4 text-darkgray hover:text-primary"
+                className="absolute top-4 right-4 cursor-pointer text-darkgray hover:text-primary"
                 onClick={handleClose}
               >
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6 z-60" />
               </button>
 
               {children}
