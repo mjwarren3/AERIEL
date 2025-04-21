@@ -6,13 +6,14 @@ import {
   getCourseByIdService,
   addLesson,
   getLessonsByCourseId,
+  updateCourseService, // Add this service to update the course
 } from "@/app/services/courseService";
 import { generateLessonsFromCourseData } from "@/app/actions/generateLessonsFromCourseData";
 import { Course, Lesson } from "@/types/courses";
 import Modal from "@/components/Modal";
 import LessonsList from "@/components/LessonsList";
 import Button from "@/components/Button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Edit } from "lucide-react";
 import Link from "next/link";
 
 export default function CourseDetailsPage() {
@@ -22,9 +23,16 @@ export default function CourseDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State for edit modal
   const [generating, setGenerating] = useState(false);
   const [description, setDescription] = useState("");
   const [lessonCount, setLessonCount] = useState(5);
+
+  // States for editing the course
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editApproved, setEditApproved] = useState(false);
+  const [editApprover, setEditApprover] = useState("");
 
   const refreshLessons = async () => {
     if (typeof id === "string") {
@@ -50,6 +58,10 @@ export default function CourseDetailsPage() {
         } else {
           setCourse(courseData);
           setDescription(courseData.course_description); // Initialize description
+          setEditTitle(courseData.course_title); // Initialize edit states
+          setEditDescription(courseData.course_description);
+          setEditApproved(courseData.approved || false);
+          setEditApprover(courseData.approver || "");
         }
 
         if (lessonsData) {
@@ -93,6 +105,29 @@ export default function CourseDetailsPage() {
     }
   };
 
+  const handleSaveCourse = async () => {
+    if (!course) return;
+
+    try {
+      const updatedCourse = await updateCourseService({
+        id: course.id,
+        course_title: editTitle,
+        course_description: editDescription,
+        approved: editApproved,
+        approver: editApprover,
+      });
+
+      if (updatedCourse) {
+        setCourse(updatedCourse); // Update course state with the response from the service
+      }
+
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error("Error updating course:", err);
+      setError("Failed to update course.");
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -114,9 +149,32 @@ export default function CourseDetailsPage() {
         <ChevronLeft />
         Back to My Courses
       </Link>
-      <h1 className="text-2xl font-bold mb-4">{course.course_title}</h1>
+      <div className="flex items-center gap-1">
+        <h1 className="text-2xl font-bold">{course.course_title}</h1>
+        <Edit
+          className="h-5 w-6 text-gray-400 cursor-pointer"
+          onClick={() => setIsEditModalOpen(true)}
+        />
+      </div>
       <p className="text-lg">{course.course_description}</p>
-      <div className="mt-4 w-full">
+      <div onClick={() => setIsEditModalOpen(true)} className="cursor-pointer">
+        {course.approved ? (
+          <div className="bg-green-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+            {course.approver ? (
+              <div>Approved by {course.approver}</div>
+            ) : (
+              <div>Approved</div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-red-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+            Not Approved
+          </div>
+        )}
+      </div>
+      <div className="my-4 border-b-2 border-gray-300 w-full"></div>
+
+      <div className="w-full">
         {lessons && lessons.length > 0 ? (
           <LessonsList
             lessons={lessons}
@@ -171,6 +229,70 @@ export default function CourseDetailsPage() {
               disabled={generating}
             >
               {generating ? "Generating..." : "Generate Lessons"}
+            </Button>
+          </div>
+        </Modal>
+      )}
+
+      {isEditModalOpen && (
+        <Modal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+        >
+          <h2 className="text-xl font-bold mb-4">Edit Course</h2>
+          <div className="w-full space-y-3">
+            <div>
+              <label className="text-sm text-gray-400 mt-4">Title</label>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="p-2 w-full border rounded"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mt-4">Description</label>
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                className="p-2 w-full border rounded"
+              />
+            </div>
+            <div className="flex items-center w-full justify-between  gap-2">
+              <label className="text-sm text-gray-400">Approved</label>
+              <button
+                type="button"
+                onClick={() => setEditApproved(!editApproved)}
+                className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                  editApproved ? "bg-green-500" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`w-4 h-4 bg-white rounded-full transform transition-transform ${
+                    editApproved ? "translate-x-5" : ""
+                  }`}
+                />
+              </button>
+            </div>
+
+            {editApproved && (
+              <div className="mt-2">
+                <label className="text-sm text-gray-400 pt-4">
+                  Approver Name & Title
+                </label>
+                <input
+                  type="text"
+                  value={editApprover}
+                  onChange={(e) => setEditApprover(e.target.value)}
+                  className="p-2 w-full border rounded mt-1"
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveCourse} variant="primary">
+              Save
             </Button>
           </div>
         </Modal>

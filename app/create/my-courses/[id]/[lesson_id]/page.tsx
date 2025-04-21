@@ -7,6 +7,7 @@ import {
   getLessonByIdService,
   addSlide,
   updateSlideService,
+  updateLessonService,
 } from "@/app/services/courseService";
 
 import { Lesson } from "@/types/courses";
@@ -16,7 +17,7 @@ import SlideEditorSidebar from "@/components/SlideEditorSidebar";
 import LessonPreviewModal from "@/components/LessonPreviewModal";
 import { LessonContextProvider } from "@/context/LessonContextProvider";
 import { LessonModule } from "@/types/lesson-modules";
-import { ChevronUp, ChevronDown, ChevronLeft } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, Edit } from "lucide-react";
 import Link from "next/link";
 import Button from "@/components/Button";
 
@@ -38,6 +39,13 @@ export default function LessonDetailsPage() {
   const [description, setDescription] = useState("");
   const [lessonCount, setLessonCount] = useState(5);
   const [additionalContext, setAdditionalContext] = useState("");
+
+  // States for editing the lesson
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editApproved, setEditApproved] = useState(false);
+  const [editApprover, setEditApprover] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const refreshSlides = async () => {
     if (typeof lesson_id === "string") {
@@ -64,6 +72,10 @@ export default function LessonDetailsPage() {
         } else {
           setDescription(lessonData.lesson_description);
           setLesson(lessonData);
+          setEditTitle(lessonData.lesson_title); // Initialize edit states
+          setEditDescription(lessonData.lesson_description);
+          setEditApproved(lessonData.approved || false);
+          setEditApprover(lessonData.approver || "");
         }
 
         if (slidesData) {
@@ -81,6 +93,29 @@ export default function LessonDetailsPage() {
 
     fetchLessonAndSlides();
   }, [lesson_id]);
+
+  const handleSaveLesson = async () => {
+    if (!lesson) return;
+
+    try {
+      const updatedLesson = await updateLessonService({
+        id: lesson.id,
+        lesson_title: editTitle,
+        lesson_description: editDescription,
+        approved: editApproved,
+        approver: editApprover, // Only set approver if approved
+      });
+
+      if (updatedLesson) {
+        setLesson(updatedLesson); // Update lesson state with the response from the service
+      }
+
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error("Error updating lesson:", err);
+      setError("Failed to update lesson.");
+    }
+  };
 
   const handleGenerateSlides = async () => {
     if (!lesson) return;
@@ -170,9 +205,31 @@ export default function LessonDetailsPage() {
         <ChevronLeft />
         Back to Course
       </Link>
-      <h1 className="text-2xl font-bold mb-4">{lesson.lesson_title}</h1>
+      <div className="flex items-center gap-1">
+        <h1 className="text-2xl font-bold">{lesson.lesson_title}</h1>
+        <Edit
+          className="h-5 w-6 text-gray-400 cursor-pointer"
+          onClick={() => setIsEditModalOpen(true)}
+        />
+      </div>
       <p className="text-lg">{lesson.lesson_description}</p>
-      <div className="mt-4 w-full">
+      <div onClick={() => setIsEditModalOpen(true)} className="cursor-pointer">
+        {lesson.approved ? (
+          <div className="bg-green-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+            {lesson.approver ? (
+              <div>Approved by {lesson.approver}</div>
+            ) : (
+              <div>Approved</div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-red-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+            Not Approved
+          </div>
+        )}
+      </div>
+      <div className="my-4 border-b-2 border-gray-300 w-full"></div>
+      <div className="w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Exercises</h2>
           <div className="flex gap-4 mt-4">
@@ -317,6 +374,70 @@ export default function LessonDetailsPage() {
             setSelectedSlide(null);
           }}
         />
+      )}
+
+      {isEditModalOpen && (
+        <Modal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+        >
+          <h2 className="text-xl font-bold mb-4">Edit Lesson</h2>
+          <div className="w-full space-y-3">
+            <div>
+              <label className="text-sm text-gray-400 mt-4">Title</label>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="p-2 w-full border rounded"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mt-4">Description</label>
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                className="p-2 w-full border rounded"
+              />
+            </div>
+            <div className="flex items-center w-full justify-between gap-2">
+              <label className="text-sm text-gray-400">Approved</label>
+              <button
+                type="button"
+                onClick={() => setEditApproved(!editApproved)}
+                className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                  editApproved ? "bg-green-500" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`w-4 h-4 bg-white rounded-full transform transition-transform ${
+                    editApproved ? "translate-x-5" : ""
+                  }`}
+                />
+              </button>
+            </div>
+
+            {editApproved && (
+              <div className="mt-2">
+                <label className="text-sm text-gray-400 pt-4">
+                  Approver Name & Title
+                </label>
+                <input
+                  type="text"
+                  value={editApprover}
+                  onChange={(e) => setEditApprover(e.target.value)}
+                  className="p-2 w-full border rounded mt-1"
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveLesson} variant="primary">
+              Save
+            </Button>
+          </div>
+        </Modal>
       )}
     </div>
   );

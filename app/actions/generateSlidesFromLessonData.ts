@@ -31,7 +31,7 @@ export async function generateSlidesFromLessonData({
       {
         role: "system",
         content: `
-You are generating slide content for a dynamic, AI-assisted learning module. Return a JSON array of slides. Each slide must match one of the following types:
+You are generating slide content for a dynamic, AI-assisted learning module. Return a JSON array of slides. Order should start with 0 and increment by 1. Each slide must match one of the following types:
 
 1. **Markdown**:
    - Purpose: A markdown module attempts to teach a concept or idea.
@@ -39,7 +39,7 @@ You are generating slide content for a dynamic, AI-assisted learning module. Ret
      {
        "type": "markdown",
        "question": "What is Markdown?",
-       "order": 1,
+       "order": 0,
        "content": {
          "text": "Markdown is a lightweight markup language for creating formatted text using a plain-text editor."
        }
@@ -51,7 +51,7 @@ You are generating slide content for a dynamic, AI-assisted learning module. Ret
      {
        "type": "single_choice",
        "question": "What is the capital of France?",
-       "order": 2,
+       "order": 1,
        "content": {
          "options": ["Paris", "London", "Berlin"],
          "correct_answer": "Paris",
@@ -66,7 +66,7 @@ You are generating slide content for a dynamic, AI-assisted learning module. Ret
      {
        "type": "multiple_choice",
        "question": "Which of the following are fruits?",
-       "order": 3,
+       "order": 2,
        "content": {
          "options": ["Apple", "Carrot", "Banana"],
          "correct_answer": ["Apple", "Banana"],
@@ -81,7 +81,7 @@ You are generating slide content for a dynamic, AI-assisted learning module. Ret
      {
        "type": "reflection",
        "question": "What are your thoughts on climate change?",
-       "order": 4,
+       "order": 3,
        "content": {
          "response_context": "Provide a thoughtful response about the importance of addressing climate change."
        }
@@ -93,7 +93,7 @@ You are generating slide content for a dynamic, AI-assisted learning module. Ret
      {
        "type": "reveal",
        "question": "What is the largest planet in our solar system?",
-       "order": 5,
+       "order": 4,
        "content": {
          "correct_answer": "Jupiter"
        }

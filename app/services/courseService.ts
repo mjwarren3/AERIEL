@@ -217,3 +217,50 @@ export async function updateSlideService(slide: LessonModule) {
     throw error;
   }
 }
+export async function updateCourseService(
+  course: Partial<Course>
+): Promise<Course | null> {
+  const supabase = createClient();
+
+  const { data, error } = await (await supabase)
+    .from("courses")
+    .update(course)
+    .eq("id", course.id)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Error updating course:", error);
+    return null;
+  }
+  if (!data) {
+    console.error("No data returned from database");
+    return null;
+  }
+
+  return data;
+}
+
+export async function updateLessonService(
+  lesson: Partial<Lesson>
+): Promise<Lesson | null> {
+  const supabase = createClient();
+
+  const { data, error } = await (await supabase)
+    .from("lessons")
+    .update(lesson)
+    .eq("id", lesson.id)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Error updating lesson:", error);
+    return null;
+  }
+  if (!data) {
+    console.error("No data returned from database");
+    return null;
+  }
+
+  return data;
+}

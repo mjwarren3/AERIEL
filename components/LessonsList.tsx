@@ -17,7 +17,9 @@ export default function LessonsList({
   courseId,
   refreshLessons,
 }: LessonsListProps) {
-  const [editableLessons, setEditableLessons] = useState<Lesson[]>(lessons);
+  const [editableLessons, setEditableLessons] = useState<Lesson[]>(
+    [...lessons].sort((a, b) => a.lesson_order - b.lesson_order) // Ensure lessons are sorted initially
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,7 +86,18 @@ export default function LessonsList({
               href={`/create/my-courses/${courseId}/${lesson.id}`}
               className="flex flex-col gap-1"
             >
-              <div className="text-lg font-bold">{lesson.lesson_title}</div>
+              <div className="flex gap-2 items-center">
+                <div className="text-lg font-bold">{lesson.lesson_title}</div>
+                {lesson.approved ? (
+                  <div className="bg-green-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full">
+                    Approved
+                  </div>
+                ) : (
+                  <div className="bg-red-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full">
+                    Not Approved
+                  </div>
+                )}
+              </div>
               <p className="text-gray-500">{lesson.lesson_description}</p>
             </Link>
             {isEditing && (
@@ -112,7 +125,7 @@ export default function LessonsList({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         course_id={courseId}
-        order={editableLessons.length + 1} // New lesson will be added at the end
+        order={editableLessons.length} // New lesson will be added at the end
       />
     </div>
   );

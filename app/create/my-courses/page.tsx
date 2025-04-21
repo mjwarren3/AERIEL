@@ -64,13 +64,28 @@ export default function MyCoursesPage() {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="p-4 border rounded-xl border-gray-300 cursor-pointer hover:bg-gray-100"
+            className="p-4 border flex flex-col justify-between rounded-xl border-gray-300 cursor-pointer hover:bg-gray-100"
             onClick={() => router.push(`/create/my-courses/${course.id}`)}
           >
-            <h3 className="text-base font-semibold">{course.course_title}</h3>
-            <p className="text-sm text-gray-600">{course.course_description}</p>
-            <div className="bg-pink-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
-              {course.course_category}
+            <div className="w-full">
+              <h3 className="text-base font-semibold">{course.course_title}</h3>
+              <p className="text-sm text-gray-600">
+                {course.course_description}
+              </p>
+            </div>
+            <div className="w-full flex justify-between items-center gap-2">
+              <div className="bg-pink-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+                {course.course_category}
+              </div>
+              {course.approved ? (
+                <div className="bg-green-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+                  Approved
+                </div>
+              ) : (
+                <div className="bg-red-300 inline-flex text-xs font-semibold px-2 py-1 rounded-full mt-2">
+                  Not Approved
+                </div>
+              )}
             </div>
           </div>
         ))}

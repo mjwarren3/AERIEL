@@ -3,6 +3,8 @@ export interface Course {
   course_title: string;
   course_description: string;
   course_category: string;
+  approved?: boolean;
+  approver?: string;
 }
 
 export interface Lesson {
@@ -10,6 +12,9 @@ export interface Lesson {
   lesson_title: string;
   lesson_description: string;
   lesson_order: number;
+  course_id?: string;
+  approved?: boolean;
+  approver?: string;
 }
 
 export interface Slide {
@@ -18,4 +23,5 @@ export interface Slide {
   slide_type: string;
   slide_content: string;
   slide_order: number;
+  lesson_id?: string;
 }
