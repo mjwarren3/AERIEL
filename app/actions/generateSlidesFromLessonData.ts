@@ -34,7 +34,7 @@ export async function generateSlidesFromLessonData({
 You are generating slide content for a dynamic, AI-assisted learning module. Return a JSON array of slides. Order should start with 0 and increment by 1. Each slide must match one of the following types:
 
 1. **Markdown**:
-   - Purpose: A markdown module attempts to teach a concept or idea.
+   - Purpose: A markdown module attempts to teach a concept or idea. It should be a thorough explanation of the concept or idea in a parent-friendly tone.
    - Format:
      {
        "type": "markdown",

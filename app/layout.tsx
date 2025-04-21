@@ -12,8 +12,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Clai | Learn anything in 3 minutes a day",
-  description: "A mobile app that helps you learn anything in 3 minutes a day",
+  title: "Feeny AI | Build interactive courses in minutes",
+  description:
+    "A platform that enables creators to build interactive course content that is AI-generated and expert-approved",
 };
 
 export default function RootLayout({

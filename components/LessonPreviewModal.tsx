@@ -10,24 +10,50 @@ import { LessonModule } from "@/types/lesson-modules";
 import RevealModule from "./lesson-modules/RevealModule";
 import PreviewModal from "./PreviewModal";
 import { ChevronLeft } from "lucide-react";
+import Button from "./Button";
+import AnimatedDiv from "./AnimatedDiv";
 
 interface LessonPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   slides: LessonModule[];
+  lessonTitle: string;
+  lessonDescription: string;
 }
 
 export default function LessonPreviewModal({
   isOpen,
   onClose,
   slides,
+  lessonTitle,
+  lessonDescription,
 }: LessonPreviewModalProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const currentSlide = slides[currentIndex];
+  const allSlides = [
+    {
+      type: "intro",
+      question: lessonTitle,
+      content: {
+        text: lessonDescription,
+      },
+      order: 0,
+    }, // Placeholder for IntroSlide
+    ...slides,
+    {
+      type: "end",
+      question: "End of Lesson",
+      content: {
+        text: "Thank you for completing the lesson!",
+      },
+      order: slides.length + 1,
+    }, // Placeholder for EndSlide
+  ];
+
+  const currentSlide = allSlides[currentIndex];
 
   const handleNext = () => {
-    if (currentIndex < slides.length - 1) {
+    if (currentIndex < allSlides.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
       console.log("No more slides to continue");
@@ -64,6 +90,46 @@ export default function LessonPreviewModal({
         );
       case "reveal":
         return <RevealModule handleNext={handleNext} slide={slideContent} />;
+      case "intro":
+        return (
+          <div className="flex flex-col items-center justify-center h-dvh max-h-[896px] p-4 text-white font-sans">
+            <AnimatedDiv className="h-full w-full bg-gradient-12 rounded-lg flex justify-center items-center flex-col p-4">
+              <h1 className="text-3xl font-extra bold text-center w-full">
+                {slideContent.question}
+              </h1>
+              <p className="text-lg font-semibold text-center mb-3 w-full">
+                {slideContent.content.text}
+              </p>
+              <div className="bg-green-900 text-white rounded-full px-3 text-sm mt-1 mb-2">
+                {slides.length} modules
+              </div>
+
+              <Button onClick={handleNext} variant="primary">
+                Start Lesson
+              </Button>
+            </AnimatedDiv>
+          </div>
+        );
+      case "end":
+        return (
+          <div className="flex flex-col items-center justify-center h-dvh max-h-[896px] p-4 text-white font-sans">
+            <AnimatedDiv className="h-full w-full bg-gradient-12 rounded-lg flex justify-center items-center flex-col p-4">
+              <h1 className="text-3xl font-extra bold">Awesome job!</h1>
+              <p className="text-base text-center mb-3">
+                You&apos;ve finished the lesson! We hope you enjoyed it.
+              </p>
+              <p className="text-base text-center mb-3">
+                Click the button below to start the next lesson in the course
+              </p>
+              <div className="flex gap-2">
+                <Button onClick={onClose} className="border-white">
+                  Close
+                </Button>
+                <Button variant="primary">Next Lesson</Button>
+              </div>
+            </AnimatedDiv>
+          </div>
+        );
       default:
         return <p>Unsupported slide type: {slideContent}</p>;
     }

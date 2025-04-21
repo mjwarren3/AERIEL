@@ -54,10 +54,32 @@ export interface Reveal {
   };
 }
 
+export interface Intro {
+  id?: number;
+  type: "intro";
+  question: string;
+  order: number;
+  content: {
+    text: string;
+  };
+}
+
+export interface End {
+  id?: number;
+  type: "end";
+  question: string;
+  order: number;
+  content: {
+    text: string;
+  };
+}
+
 // Union type for all lesson module types
 export type LessonModule =
   | Markdown
   | SingleChoice
   | MultipleChoice
   | Reflection
-  | Reveal;
+  | Reveal
+  | Intro
+  | End;

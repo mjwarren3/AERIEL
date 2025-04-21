@@ -81,6 +81,10 @@ code {
   background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
 }
 
+.bg-gradient-12 {
+  background: linear-gradient(to left, #15a175, #2f8d8a);
+}
+
 .gradient-text {
   @apply text-transparent bg-gradient-to-r from-teal-500 to-green-500 bg-clip-text;
 }

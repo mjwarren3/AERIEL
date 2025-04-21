@@ -357,6 +357,8 @@ export default function LessonDetailsPage() {
       {isPreviewOpen && slides && (
         <LessonContextProvider>
           <LessonPreviewModal
+            lessonTitle={lesson.lesson_title}
+            lessonDescription={lesson.lesson_description}
             isOpen={isPreviewOpen}
             onClose={() => setIsPreviewOpen(false)}
             slides={slides}
