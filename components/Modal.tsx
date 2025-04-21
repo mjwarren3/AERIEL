@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white max-w-xl w-full mx-4 rounded-xl shadow-xl relative"
+          className="bg-white max-w-lg w-full mx-4 rounded-xl shadow-xl relative"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
             <X className="w-6 h-6" />
           </button>
 
-          <div className="p-6">{children}</div>
+          <div className="p-4">{children}</div>
         </motion.div>
       </motion.div>
     </AnimatePresence>,

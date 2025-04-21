@@ -3,13 +3,13 @@ import { Lesson } from "@/types/courses";
 import { updateLessonsService } from "@/app/services/courseService";
 import Link from "next/link";
 import Button from "./Button";
+import NewLessonModal from "./NewLessonModal";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 type LessonsListProps = {
   lessons: Lesson[];
   courseId: string;
   refreshLessons: () => void;
-  isEditing?: boolean;
-  setIsEditing?: (isEditing: boolean) => void;
 };
 
 export default function LessonsList({
@@ -20,6 +20,7 @@ export default function LessonsList({
   const [editableLessons, setEditableLessons] = useState<Lesson[]>(lessons);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMoveLesson = (index: number, direction: "up" | "down") => {
     const newLessons = [...editableLessons];
@@ -59,79 +60,60 @@ export default function LessonsList({
     <div className="w-full">
       <div className="w-full justify-between items-center flex">
         <h2 className="text-xl font-semibold">Lessons</h2>
-        {isEditing ? (
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
+        <div className="flex gap-2 items-center">
+          {isEditing ? (
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "Save"}
+            </Button>
+          ) : (
+            <Button onClick={() => setIsEditing(true)}>Edit Order</Button>
+          )}
+          <Button onClick={() => setIsModalOpen(true)} variant="primary">
+            Add Lesson
           </Button>
-        ) : (
-          <Button onClick={() => setIsEditing(true)}>Edit Order</Button>
-        )}
+        </div>
       </div>
 
       <div className="w-full flex flex-col gap-2 mt-4">
         {editableLessons.map((lesson, index) => (
           <div
-            key={lesson.lesson_order}
-            className="border rounded-lg border-gray-300 p-3 flex flex-col gap-2 w-full"
+            key={index}
+            className="border rounded-lg border-gray-300 hover:bg-gray-100 p-3 flex items-center justify-between w-full"
           >
-            {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  value={lesson.lesson_title}
-                  onChange={(e) =>
-                    setEditableLessons((prev) =>
-                      prev.map((l, i) =>
-                        i === index ? { ...l, lesson_title: e.target.value } : l
-                      )
-                    )
-                  }
-                  className="border p-2 rounded w-full"
-                />
-                <textarea
-                  value={lesson.lesson_description}
-                  onChange={(e) =>
-                    setEditableLessons((prev) =>
-                      prev.map((l, i) =>
-                        i === index
-                          ? { ...l, lesson_description: e.target.value }
-                          : l
-                      )
-                    )
-                  }
-                  className="border p-2 rounded w-full"
-                />
-                <div className="flex justify-between">
-                  <button
-                    onClick={() => handleMoveLesson(index, "up")}
-                    className="bg-gray-300 text-black px-4 py-2 rounded"
-                    disabled={index === 0}
-                  >
-                    ↑ Move Up
-                  </button>
-                  <button
-                    onClick={() => handleMoveLesson(index, "down")}
-                    className="bg-gray-300 text-black px-4 py-2 rounded"
-                    disabled={index === editableLessons.length - 1}
-                  >
-                    ↓ Move Down
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <Link
-                  href={`/create/my-courses/${courseId}/${lesson.id}`}
-                  className="flex flex-col gap-1"
+            <Link
+              href={`/create/my-courses/${courseId}/${lesson.id}`}
+              className="flex flex-col gap-1"
+            >
+              <div className="text-lg font-bold">{lesson.lesson_title}</div>
+              <p className="text-gray-500">{lesson.lesson_description}</p>
+            </Link>
+            {isEditing && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleMoveLesson(index, "up")}
+                  className="p-2 rounded bg-gray-200 hover:bg-gray-300"
+                  disabled={index === 0}
                 >
-                  <div className="text-lg font-bold">{lesson.lesson_title}</div>
-                  <p className="text-gray-500">{lesson.lesson_description}</p>
-                </Link>
-              </>
+                  <ChevronUp className="w-5 h-5 text-gray-600" />
+                </button>
+                <button
+                  onClick={() => handleMoveLesson(index, "down")}
+                  className="p-2 rounded bg-gray-200 hover:bg-gray-300"
+                  disabled={index === editableLessons.length - 1}
+                >
+                  <ChevronDown className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
             )}
           </div>
         ))}
       </div>
+      <NewLessonModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        course_id={courseId}
+        order={editableLessons.length + 1} // New lesson will be added at the end
+      />
     </div>
   );
 }

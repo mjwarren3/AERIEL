@@ -64,7 +64,7 @@ export default function MyCoursesPage() {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="p-4 border rounded-xl border-gray-400 cursor-pointer hover:bg-gray-100"
+            className="p-4 border rounded-xl border-gray-300 cursor-pointer hover:bg-gray-100"
             onClick={() => router.push(`/create/my-courses/${course.id}`)}
           >
             <h3 className="text-base font-semibold">{course.course_title}</h3>

@@ -16,10 +16,12 @@ export async function generateSlidesFromLessonData({
   title,
   description,
   lessonCount,
+  additionalContext,
 }: {
   title: string;
   description: string;
   lessonCount: number;
+  additionalContext?: string;
 }): Promise<LessonModule[]> {
   console.log("Executing generate slides from lesson data");
 
@@ -97,12 +99,14 @@ You are generating slide content for a dynamic, AI-assisted learning module. Ret
        }
      }
 
+     Make sure to include a Markdown slide for every other slide. The information on the Markdown slide should help inform an exercise on the slide that comes after it.
+
 Ensure that each slide matches one of these types and includes the required fields. Return only valid JSON.
 `.trim(),
       },
       {
         role: "user",
-        content: `Generate ${lessonCount} slides for a lesson titled "${title}". Description: ${description}`,
+        content: `Generate ${lessonCount} slides for a lesson titled "${title}". Description of the lesson: ${description}. Some additional context to consider is: ${additionalContext}. The slides should be in the format specified above.`,
       },
     ],
   });

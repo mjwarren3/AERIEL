@@ -124,19 +124,21 @@ export default function CourseDetailsPage() {
             refreshLessons={refreshLessons}
           />
         ) : (
-          <p className="text-gray-600 mt-2">
-            No lessons available for this course.
-          </p>
+          <div className="border rounded-lg border-gray-300 bg-gray-100 p-8 justify-center items-center flex flex-col gap-4 w-full">
+            <p className="text-gray-600">
+              No lessons created for this course yet
+            </p>
+            <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+              Generate Lessons
+            </Button>
+          </div>
         )}
-        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-          Generate Lessons
-        </Button>
       </div>
 
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <h2 className="text-xl font-bold mb-4">Generate Lessons</h2>
-          <p>
+          <p className="text-gray-600">
             Adjust the description and upload context content to create a list
             of lessons in this course
           </p>
@@ -154,6 +156,12 @@ export default function CourseDetailsPage() {
             onChange={(e) => setLessonCount(Number(e.target.value))} // Update lesson count
             className="p-2 w-full border rounded mt-2"
             min={1}
+          />
+          <label>Upload any relevant material for context</label>
+          <input
+            type="file"
+            accept=".pdf, .docx, .txt"
+            className="p-2 w-full border rounded mt-2"
           />
           <div className="flex justify-end gap-2 mt-4">
             <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>

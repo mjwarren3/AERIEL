@@ -16,10 +16,13 @@ import SlideEditorSidebar from "@/components/SlideEditorSidebar";
 import LessonPreviewModal from "@/components/LessonPreviewModal";
 import { LessonContextProvider } from "@/context/LessonContextProvider";
 import { LessonModule } from "@/types/lesson-modules";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import Button from "@/components/Button";
 
 export default function LessonDetailsPage() {
   const { lesson_id } = useParams();
+  const { id } = useParams();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [slides, setSlides] = useState<LessonModule[] | null>(null);
   const [selectedSlide, setSelectedSlide] = useState<LessonModule | null>(null);
@@ -32,6 +35,9 @@ export default function LessonDetailsPage() {
   const [updatedSlides, setUpdatedSlides] = useState<LessonModule[] | null>(
     null
   );
+  const [description, setDescription] = useState("");
+  const [lessonCount, setLessonCount] = useState(5);
+  const [additionalContext, setAdditionalContext] = useState("");
 
   const refreshSlides = async () => {
     if (typeof lesson_id === "string") {
@@ -56,11 +62,13 @@ export default function LessonDetailsPage() {
         if (!lessonData) {
           setError("Lesson not found.");
         } else {
+          setDescription(lessonData.lesson_description);
           setLesson(lessonData);
         }
 
         if (slidesData) {
           setSlides(slidesData);
+
           setUpdatedSlides(slidesData);
         }
       } catch (err) {
@@ -83,7 +91,8 @@ export default function LessonDetailsPage() {
         await generateSlidesFromLessonData({
           title: lesson.lesson_title,
           description: lesson.lesson_description,
-          lessonCount: 5,
+          additionalContext: additionalContext,
+          lessonCount: lessonCount,
         });
 
       for (const slide of generatedSlides) {
@@ -153,11 +162,35 @@ export default function LessonDetailsPage() {
   }
 
   return (
-    <div className="w-full flex flex-col items-start p-4">
+    <div className="w-full flex flex-col items-start">
+      <Link
+        href={`/create/my-courses/${id}`}
+        className="flex text-gray-500 items-center"
+      >
+        <ChevronLeft />
+        Back to Course
+      </Link>
       <h1 className="text-2xl font-bold mb-4">{lesson.lesson_title}</h1>
       <p className="text-lg">{lesson.lesson_description}</p>
       <div className="mt-4 w-full">
-        <h2 className="text-xl font-semibold">Slides</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Exercises</h2>
+          <div className="flex gap-4 mt-4">
+            {!isEditingOrder ? (
+              <Button onClick={() => setIsEditingOrder(true)}>
+                Edit Order
+              </Button>
+            ) : (
+              <>
+                <Button onClick={handleSaveOrder}>Save</Button>
+              </>
+            )}
+
+            <Button variant="primary" onClick={() => setIsPreviewOpen(true)}>
+              Preview Lesson
+            </Button>
+          </div>
+        </div>
         {slides && slides.length > 0 ? (
           <div className="flex flex-col w-full gap-4">
             {(isEditingOrder ? updatedSlides : slides)
@@ -165,15 +198,23 @@ export default function LessonDetailsPage() {
               .map((slide, index) => (
                 <div
                   key={slide.id}
-                  className="p-4 border rounded cursor-pointer w-full hover:bg-gray-100 flex items-center justify-between"
+                  onClick={() => !isEditingOrder && setSelectedSlide(slide)}
+                  className="border p-2 border-gray-300 rounded-lg cursor-pointer w-full hover:bg-gray-100 flex items-center justify-between"
                 >
-                  <div
-                    onClick={() => !isEditingOrder && setSelectedSlide(slide)}
-                  >
-                    <h3 className="text-base font-semibold">
+                  <div className="flex gap-2 items-center">
+                    <div className="inline-flex rounded-lg bg-orange-200 min-h-16 w-20 font-semibold px-2 text-xs justify-center items-center text-center">
+                      {slide.type
+                        .split("_")
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                    </div>
+                    <div className="text-lg font-semibold">
                       {slide.question}
-                    </h3>
+                    </div>
                   </div>
+
                   {isEditingOrder && (
                     <div className="flex gap-2">
                       <button
@@ -196,67 +237,62 @@ export default function LessonDetailsPage() {
               ))}
           </div>
         ) : (
-          <p className="text-gray-600 mt-2">
-            No slides available for this lesson.
-          </p>
+          <div className="flex flex-col items-center justify-center w-full gap-2 border bg-gray-100 border-gray-300 rounded-lg p-8">
+            <p className="text-gray-600 mt-2">
+              No exercises available for this lesson.
+            </p>
+            <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+              Generate Exercises
+            </Button>
+          </div>
         )}
-        <div className="flex gap-4 mt-4">
-          {!isEditingOrder ? (
-            <button
-              onClick={() => setIsEditingOrder(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Edit Order
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={() => setIsEditingOrder(false)}
-                className="bg-gray-300 text-black px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveOrder}
-                className="bg-green-500 text-white px-4 py-2 rounded"
-              >
-                Save Order
-              </button>
-            </>
-          )}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Generate Slides
-          </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Preview
-          </button>
-        </div>
       </div>
 
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <h2 className="text-xl font-bold mb-4">Generate Slides</h2>
-          <p>Are you sure you want to generate slides for this lesson?</p>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="bg-gray-300 text-black px-4 py-2 rounded mr-2"
-            >
-              Cancel
-            </button>
-            <button
+          <h2 className="text-xl font-bold mb-4">Generate Exercises</h2>
+          <p className="text-gray-600">
+            Adjust the description and upload context content to create a list
+            of lessons in this course
+          </p>
+          <label>Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)} // Allow user to edit description
+            className="p-2 w-full border rounded mt-2"
+          />
+          <label>Any additional context you want to provide?</label>
+          <textarea
+            rows={2}
+            value={additionalContext}
+            onChange={(e) => setAdditionalContext(e.target.value)} // Allow user to edit description
+            className="p-2 w-full border rounded mt-2"
+          />
+
+          <label>Upload any relevant material for context</label>
+          <input
+            type="file"
+            accept=".pdf, .docx, .txt"
+            className="p-2 w-full border rounded mt-2"
+          />
+
+          <label>How many exercises do you want to generate?</label>
+          <input
+            type="number"
+            value={lessonCount}
+            onChange={(e) => setLessonCount(Number(e.target.value))} // Update lesson count
+            className="p-2 w-full border rounded mt-2"
+            min={1}
+          />
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button
               onClick={handleGenerateSlides}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              variant="primary"
               disabled={generating}
             >
-              {generating ? "Generating..." : "Generate"}
-            </button>
+              {generating ? "Generating..." : "Generate Lessons"}
+            </Button>
           </div>
         </Modal>
       )}

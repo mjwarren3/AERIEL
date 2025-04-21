@@ -35,7 +35,7 @@ const Button: React.FC<ButtonProps> = ({
     success: "bg-green-500 text-white hover:bg-green-600", // Success styles
     destructive: "bg-red-500 text-white hover:bg-red-600", // Destructive styles
   };
-  const disabledStyles = "cursor-not-allowed opacity-50";
+  const disabledStyles = "cursor-not-allowed opacity-50 bg-gray-300";
 
   return (
     <button
