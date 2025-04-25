@@ -24,8 +24,8 @@ export default function RevealModule({
   };
 
   return (
-    <AnimatedDiv className="flex flex-col justify-between max-h-[896px] bg-white h-dvh font-sans">
-      <div className="w-full mt-16 px-8">
+    <div className="flex flex-col justify-between max-h-[896px] bg-white h-dvh font-sans">
+      <AnimatedDiv className="w-full mt-16 px-8">
         <h1 className="gradient-text">{slide.question}</h1>
         <div className="relative mt-6 rounded-lg p-6 bg-gray-100 ">
           {/* The text is always present */}
@@ -34,7 +34,7 @@ export default function RevealModule({
               !isRevealed ? "blur-sm" : ""
             }`}
           >
-            ✨ {slide.content.correct_answer} ✨
+            {slide.content.correct_answer}
           </div>
 
           {/* Blur overlay */}
@@ -47,7 +47,7 @@ export default function RevealModule({
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
                 <Button
                   onClick={handleReveal}
-                  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-lg hover:from-purple-600 hover:to-indigo-600 border-0 border-transparent"
+                  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-lg hover:from-purple-600 hover:to-indigo-600 border-0"
                 >
                   Reveal
                 </Button>
@@ -55,7 +55,7 @@ export default function RevealModule({
             </div>
           )}
         </div>
-      </div>
+      </AnimatedDiv>
       {isRevealed && (
         <div className="w-full bg-green-200 rounded-t-xl pb-4 px-4 pt-2 mt-4">
           <AnimatedDiv>
@@ -69,6 +69,6 @@ export default function RevealModule({
           </Button>
         </div>
       )}
-    </AnimatedDiv>
+    </div>
   );
 }

@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
           <LoaderPinwheel className="w-7 h-7 text-primary text-teal-500" />
 
           <div className="gradient-text font-sans font-extrabold text-3xl ">
-            Feeny AI
+            AERIEL
           </div>
         </Link>
 
@@ -28,8 +28,9 @@ const Sidebar: React.FC = () => {
       </div>
       <div>
         <p className="text-sm text-gray-500 mt-4 mb-2">
-          Feeny AI is a platform that allows users to generate mobile-friendly,
-          engaging course content using AI. <br></br>
+          AERIEL (AI-generated Expert-reviewed Interactive e-Learning) is a
+          platform that allows users to generate mobile-friendly, engaging
+          course content using AI. <br></br>
           <br></br>It is a hybrid system that is human-led, AI-generated, and
           expert-approved, ensuring all content is accurate and reliable.{" "}
           <br></br>

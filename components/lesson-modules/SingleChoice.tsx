@@ -27,8 +27,8 @@ export default function SingleChoiceModule({
   };
 
   return (
-    <AnimatedDiv className="flex flex-col justify-between max-h-[896px] bg-white  h-dvh font-sans">
-      <div className="w-full mt-16 px-8">
+    <div className="flex flex-col justify-between max-h-[896px] bg-white  h-dvh font-sans">
+      <AnimatedDiv className="w-full mt-16 px-8">
         <h1 className="gradient-text">{slide.question}</h1>
         <div className="text-gray-500 my-2">Select one</div>
         <div className="flex flex-col w-full gap-2 mt-4">
@@ -59,7 +59,7 @@ export default function SingleChoiceModule({
               : slide.content.wrong_answer_description}
           </p>
         )}
-      </div>
+      </AnimatedDiv>
       <div className="w-full">
         {!isChecked || !isCorrect ? (
           <div className="w-full rounded-t-xl pb-4 px-4 pt-2">
@@ -87,6 +87,6 @@ export default function SingleChoiceModule({
           )
         )}
       </div>
-    </AnimatedDiv>
+    </div>
   );
 }

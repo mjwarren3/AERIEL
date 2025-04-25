@@ -33,8 +33,8 @@ export default function ReflectionModule({
   };
 
   return (
-    <AnimatedDiv className="flex flex-col justify-between max-h-[896px] bg-white h-dvh font-sans">
-      <div className="w-full mt-16 px-8">
+    <div className="flex flex-col justify-between max-h-[896px] bg-white h-dvh font-sans">
+      <AnimatedDiv className="w-full mt-16 px-8">
         {!submitted ? (
           <>
             <h3 className="gradient-text">{slide.question}</h3>
@@ -45,6 +45,10 @@ export default function ReflectionModule({
               value={reflection}
               onChange={(e) => setReflection(e.target.value)}
             ></textarea>
+            <p className="text-gray-500 text-sm text-center mt-1">
+              Please do not include any personal information in your reflection,
+              such as your name, address, or email
+            </p>
           </>
         ) : (
           <>
@@ -61,7 +65,7 @@ export default function ReflectionModule({
             </div>
           </>
         )}
-      </div>
+      </AnimatedDiv>
       {submitted ? (
         <div className="w-full bg-green-200 rounded-t-xl pb-4 px-4 pt-2 mt-4">
           <AnimatedDiv>
@@ -91,6 +95,6 @@ export default function ReflectionModule({
           </Button>
         </div>
       )}
-    </AnimatedDiv>
+    </div>
   );
 }

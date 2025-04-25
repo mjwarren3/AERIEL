@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Feeny AI | Build interactive courses in minutes",
+  title: "AERIEL | Build interactive courses in minutes",
   description:
     "A platform that enables creators to build interactive course content that is AI-generated and expert-approved",
 };
